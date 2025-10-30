@@ -5,48 +5,163 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script>
         function toggleAddPlayer() {
-            var form = document.getElementById("addPlayerForm");
-            form.style.display = form.style.display === "none" ? "block" : "none";
+            const form = document.getElementById("addPlayerForm");
+            form.classList.toggle("show");
         }
+
+        // Time selector functionality
+        function updateTime() {
+            const hourSlider = document.getElementById('hourSlider');
+            const minuteSlider = document.getElementById('minuteSlider');
+            const hourInput = document.getElementById('hourValue');
+            const minuteInput = document.getElementById('minuteValue');
+            const selectedTime = document.getElementById('selectedTime');
+
+            const hour = parseInt(hourSlider.value);
+            const minuteIndex = parseInt(minuteSlider.value);
+            const minute = minuteIndex * 5; // Convert to 5-minute intervals
+
+            // Update input values
+            hourInput.value = hour;
+            minuteInput.value = minute;
+            
+            // Update hidden input
+            const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+            selectedTime.value = timeString;
+        }
+
+        function updateFromHourInput() {
+            const hourInput = document.getElementById('hourValue');
+            const hourSlider = document.getElementById('hourSlider');
+            
+            let hour = parseInt(hourInput.value);
+            if (hour < 6) hour = 6;
+            if (hour > 20) hour = 20;
+            
+            hourInput.value = hour;
+            hourSlider.value = hour;
+            updateTime();
+        }
+
+        function updateFromMinuteInput() {
+            const minuteInput = document.getElementById('minuteValue');
+            const minuteSlider = document.getElementById('minuteSlider');
+            
+            let minute = parseInt(minuteInput.value);
+            // Round to nearest 5-minute interval
+            minute = Math.round(minute / 5) * 5;
+            if (minute < 0) minute = 0;
+            if (minute > 55) minute = 55;
+            
+            minuteInput.value = minute;
+            minuteSlider.value = minute / 5; // Convert to slider index
+            updateTime();
+        }
+
+        // Initialize sliders when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const hourSlider = document.getElementById('hourSlider');
+            const minuteSlider = document.getElementById('minuteSlider');
+            const hourInput = document.getElementById('hourValue');
+            const minuteInput = document.getElementById('minuteValue');
+            
+            // Slider events
+            hourSlider.addEventListener('input', updateTime);
+            minuteSlider.addEventListener('input', updateTime);
+            
+            // Input events
+            hourInput.addEventListener('input', updateFromHourInput);
+            hourInput.addEventListener('blur', updateFromHourInput);
+            minuteInput.addEventListener('input', updateFromMinuteInput);
+            minuteInput.addEventListener('blur', updateFromMinuteInput);
+            
+            // Set initial time
+            updateTime();
+        });
     </script>
 </head>
 <body>
-    <div class="container">
-        <h1>Booking Page for {{ club }}</h1>
+    <div class="container fade-in">
+        <h1 class="title">🏌️ Booking Page for {{ club }}</h1>
 
-        <section class="players-section">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="players-section card slide-up">
             <h2>All Players</h2>
             {% if players %}
                 <ul class="player-list">
                     {% for player in players %}
-                        <li>{{ player }}</li>
+                        <li class="fade-in-delay player-item">
+                            <span class="player-name">{{ player }}</span>
+                            <form method="post" action="/booking" style="display: inline;">
+                                <input type="hidden" name="remove_player" value="{{ player }}">
+                                <button type="submit" class="btn-remove" onclick="return confirm('Remove {{ player }}?')">×</button>
+                            </form>
+                        </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <p>No players added yet.</p>
+                <p class="fade-in-delay">No players added yet.</p>
             {% endif %}
-            <button class="btn" type="button" onclick="toggleAddPlayer()">+ Add Player</button>
-            <form id="addPlayerForm" method="post" action="/booking" style="display:none;" class="form">
-                <input type="text" name="player" placeholder="Player Name" required>
-                <button class="btn" type="submit">Add Player</button>
+            <button class="btn add-btn" type="button" onclick="toggleAddPlayer()">+ Add Player</button>
+            <form id="addPlayerForm" method="post" action="/booking" class="form hidden card">
+                <input type="text" name="player" placeholder="Enter player name..." required>
+                <button class="btn-primary" type="submit">Add Player</button>
             </form>
         </section>
 
-        <section class="booking-section">
+        <section class="booking-section card fade-in-delay">
             <h2>Book a Tee Time</h2>
             <form method="post" action="/booking" class="form">
                 <label>Date</label>
                 <input type="date" name="date" required>
 
-                <label>Time</label>
-                <input type="time" name="time" required>
+                <div class="booking-controls">
+                    <div class="time-section">
+                        <label>Time</label>
+                        <div class="time-selector">
+                            <div class="time-slider-container">
+                                <label class="slider-label">Hour</label>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="hourSlider" min="6" max="20" value="12" 
+                                           orient="vertical" class="vertical-slider hour-slider">
+                                    <input type="number" id="hourValue" min="6" max="20" value="12" class="time-input">
+                                </div>
+                            </div>
+                            <div class="time-separator">:</div>
+                            <div class="time-slider-container">
+                                <label class="slider-label">Min</label>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="minuteSlider" min="0" max="11" value="0" 
+                                           orient="vertical" class="vertical-slider minute-slider">
+                                    <input type="number" id="minuteValue" min="0" max="55" step="5" value="0" class="time-input">
+                                </div>
+                            </div>
+                            <input type="hidden" name="time" id="selectedTime" value="12:00">
+                        </div>
+                    </div>
 
-                <label>Select Players (1–4)</label>
-                <select name="selected_players" multiple size="4" required>
-                    {% for player in players %}
-                        <option value="{{ player }}">{{ player }}</option>
-                    {% endfor %}
-                </select>
+                    <div class="players-selection-section">
+                        <label>Select Players (1–4)</label>
+                        <div class="players-checkbox-list">
+                            {% for player in players %}
+                                <div class="player-checkbox-item">
+                                    <input type="checkbox" id="player_{{ loop.index }}" name="selected_players" value="{{ player }}">
+                                    <label for="player_{{ loop.index }}" class="player-checkbox-label">{{ player }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
 
                 <button class="btn-primary" type="submit">Book Tee Time</button>
             </form>

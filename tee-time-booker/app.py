@@ -52,6 +52,17 @@ def booking():
                 flash("Player name cannot be empty.", "error")
             return redirect(url_for("booking"))
 
+        # Remove player form
+        if "remove_player" in request.form:
+            player_to_remove = request.form.get("remove_player", "").strip()
+            if player_to_remove in players:
+                players.remove(player_to_remove)
+                update_env_players(players)
+                flash(f"Removed player: {player_to_remove}", "success")
+            else:
+                flash("Player not found.", "error")
+            return redirect(url_for("booking"))
+
         # Booking form
         date = request.form.get("date").replace("-", "/")
         time = [request.form.get("time")]
