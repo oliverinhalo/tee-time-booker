@@ -278,6 +278,31 @@ def bookTeeTime(session, hrefs, tokens, player_1, player_2="", player_3="", play
     return response
     
 
+def run(username, password, club_name, player_1, player_2="", player_3="", player_4="", tee_time_preferences=[], tee_time_date=""):
+    logging.info("Script started at: %s", datetime.now())
+
+    session = requests.Session()
+
+    # URLs
+    club_brs_url = f'https://brsgolf.com/{club_name}'
+    club_members_brs_url = f'https://members.brsgolf.com/'
+    club_login_brs_url = f'https://members.brsgolf.com/{club_name}/login'
+
+    # Prefs
+    # tee_time_preferences = ["12:50", "13:00", "20:00"]
+    # tee_time_date = '2023/07/24'
+
+    getPHPSessionID(session, club_brs_url)
+    getOtherCookies(session, club_members_brs_url)
+    csrf_token = getCSRFToken(session, club_login_brs_url)
+    getTimeSheet(session, csrf_token)
+    dynamic_html = getDynamicHTML(tee_time_date)
+    available_tee_times_hrefs = hrefParser(dynamic_html, tee_time_preferences)
+    booking_tokens = bookingSlotTokens(session, available_tee_times_hrefs)
+    response = bookTeeTime(session, available_tee_times_hrefs, booking_tokens, player_1)
+
+
+
 if __name__ == "__main__":
 
     logging.info("Script started at: %s", datetime.now())
