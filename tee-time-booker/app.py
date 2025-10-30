@@ -64,9 +64,24 @@ def booking():
             return redirect(url_for("booking"))
 
         # Booking form
-        date = request.form.get("date").replace("-", "/")
+        date_str = request.form.get("date")
         time = [request.form.get("time")]
         selected_players = request.form.getlist("selected_players")
+
+        # Validate date is in the future
+        from datetime import datetime, date
+        try:
+            booking_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+            today = date.today()
+            if booking_date <= today:
+                flash("You can only book for future dates.", "error")
+                return redirect(url_for("booking"))
+        except ValueError:
+            flash("Invalid date format.", "error")
+            return redirect(url_for("booking"))
+
+        # Convert date format for the booking system
+        date = date_str.replace("-", "/")
 
         if len(selected_players) < 1 or len(selected_players) > 4:
             flash("Please select between 1 and 4 players.", "error")
@@ -108,6 +123,10 @@ def index():
 
     return render_template("login.html")
 
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
 
 if __name__ == "__main__":
     app.run(debug=True)

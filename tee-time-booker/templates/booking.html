@@ -64,6 +64,18 @@
             const minuteSlider = document.getElementById('minuteSlider');
             const hourInput = document.getElementById('hourValue');
             const minuteInput = document.getElementById('minuteValue');
+            const dateInput = document.getElementById('bookingDate');
+            
+            // Set minimum date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const minDate = tomorrow.toISOString().split('T')[0];
+            dateInput.min = minDate;
+            
+            // Set default date to tomorrow if no date is selected
+            if (!dateInput.value) {
+                dateInput.value = minDate;
+            }
             
             // Slider events
             hourSlider.addEventListener('input', updateTime);
@@ -123,7 +135,7 @@
             <h2>Book a Tee Time</h2>
             <form method="post" action="/booking" class="form">
                 <label>Date</label>
-                <input type="date" name="date" required>
+                <input type="date" name="date" id="bookingDate" required>
 
                 <div class="booking-controls">
                     <div class="time-section">
