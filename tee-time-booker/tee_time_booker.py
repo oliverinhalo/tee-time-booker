@@ -278,7 +278,7 @@ def bookTeeTime(session, hrefs, tokens, player_1, player_2="", player_3="", play
     return response
     
 
-def run(username, password, club_name, player_1, player_2="", player_3="", player_4="", tee_time_preferences=[], tee_time_date=""):
+def run(username, password, club_name, tee_time_preferences, tee_time_date, player_1, player_2="", player_3="", player_4=""):
     logging.info("Script started at: %s", datetime.now())
 
     session = requests.Session()
@@ -300,6 +300,8 @@ def run(username, password, club_name, player_1, player_2="", player_3="", playe
     available_tee_times_hrefs = hrefParser(dynamic_html, tee_time_preferences)
     booking_tokens = bookingSlotTokens(session, available_tee_times_hrefs)
     response = bookTeeTime(session, available_tee_times_hrefs, booking_tokens, player_1)
+
+    return response
 
 
 

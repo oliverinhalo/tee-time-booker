@@ -1,31 +1,56 @@
+<!DOCTYPE html>
+<html>
 <head>
-    <title>
-        Booking: {{ club }}
-    </title>
+    <title>Booking: {{ club }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function toggleAddPlayer() {
+            var form = document.getElementById("addPlayerForm");
+            form.style.display = form.style.display === "none" ? "block" : "none";
+        }
+    </script>
 </head>
 <body>
-    <div>
+    <div class="container">
         <h1>Booking Page for {{ club }}</h1>
-        <h2>All Players:</h2>
-        <ul>
-            {% for player in players %}
-                <li>{{ player }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div>
-        <form method="post" action="/book">
-            <div>
-                <label for="date">Date</label>
+
+        <section class="players-section">
+            <h2>All Players</h2>
+            {% if players %}
+                <ul class="player-list">
+                    {% for player in players %}
+                        <li>{{ player }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No players added yet.</p>
+            {% endif %}
+            <button class="btn" type="button" onclick="toggleAddPlayer()">+ Add Player</button>
+            <form id="addPlayerForm" method="post" action="/booking" style="display:none;" class="form">
+                <input type="text" name="player" placeholder="Player Name" required>
+                <button class="btn" type="submit">Add Player</button>
+            </form>
+        </section>
+
+        <section class="booking-section">
+            <h2>Book a Tee Time</h2>
+            <form method="post" action="/booking" class="form">
+                <label>Date</label>
                 <input type="date" name="date" required>
-            </div>
-            <div>
-                <label for="time">Time</label>
+
+                <label>Time</label>
                 <input type="time" name="time" required>
-            </div>
-            <div>
-                <input type="submit" value="Book Tee Time">
-            </div>
-        </form>
+
+                <label>Select Players (1–4)</label>
+                <select name="selected_players" multiple size="4" required>
+                    {% for player in players %}
+                        <option value="{{ player }}">{{ player }}</option>
+                    {% endfor %}
+                </select>
+
+                <button class="btn-primary" type="submit">Book Tee Time</button>
+            </form>
+        </section>
     </div>
 </body>
+</html>

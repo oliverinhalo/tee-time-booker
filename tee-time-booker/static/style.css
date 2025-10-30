@@ -1,0 +1,103 @@
+body {
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: #f4f7f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #1a4b84;
+}
+
+h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #1a4b84;
+    padding-bottom: 6px;
+    margin-top: 25px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+label {
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"],
+input[type="time"],
+select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+select[multiple] {
+    height: 100px;
+}
+
+.btn,
+.btn-primary {
+    padding: 10px 15px;
+    font-size: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn {
+    background: #eee;
+    color: #333;
+}
+
+.btn:hover {
+    background: #ddd;
+}
+
+.btn-primary {
+    background: #1a4b84;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #153a67;
+}
+
+.player-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.player-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.players-section,
+.booking-section {
+    margin-top: 20px;
+}
+
+.login-form {
+    max-width: 400px;
+    margin: 0 auto;
+}
