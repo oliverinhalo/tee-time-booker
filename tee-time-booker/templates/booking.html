@@ -1,5 +1,31 @@
 <head>
     <title>
-        Booking: {club}
+        Booking: {{ club }}
     </title>
 </head>
+<body>
+    <div>
+        <h1>Booking Page for {{ club }}</h1>
+        <h2>All Players:</h2>
+        <ul>
+            {% for player in players %}
+                <li>{{ player }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div>
+        <form method="post" action="/book">
+            <div>
+                <label for="date">Date</label>
+                <input type="date" name="date" required>
+            </div>
+            <div>
+                <label for="time">Time</label>
+                <input type="time" name="time" required>
+            </div>
+            <div>
+                <input type="submit" value="Book Tee Time">
+            </div>
+        </form>
+    </div>
+</body>
