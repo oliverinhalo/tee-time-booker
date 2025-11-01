@@ -15,3 +15,5 @@ terraform.*
 # Ignore misc files
 locals.tf
 lambda_main.zip
+
+.vs

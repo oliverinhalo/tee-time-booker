@@ -131,6 +131,58 @@
             </form>
         </section>
 
+        <!-- Current Bookings Section -->
+        <section class="current-bookings-section card fade-in-delay">
+            <h2>📅 Current Bookings</h2>
+            {% if current_bookings %}
+                <div class="bookings-list">
+                    {% for booking in current_bookings %}
+                        <div class="booking-item card">
+                            <div class="booking-header">
+                                <div class="booking-date">
+                                    <strong>{{ booking.formatted_date }}</strong>
+                                    <span class="day-name">{{ booking.day_name }}</span>
+                                </div>
+                                <div class="booking-time">
+                                    <span class="time-badge">{{ booking.time }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="booking-details">
+                                <div class="booking-info">
+                                    <p><strong>Club:</strong> {{ booking.club }}</p>
+                                    <p><strong>Username:</strong> {{ booking.username }}</p>
+                                </div>
+                                
+                                <div class="booking-players">
+                                    <strong>Players:</strong>
+                                    <div class="players-tags">
+                                        {% for player in booking.players_list %}
+                                            <span class="player-tag">{{ player.strip() }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="booking-actions">
+                                <form method="post" action="/booking" style="display: inline;">
+                                    <input type="hidden" name="delete_booking" value="{{ booking.id }}">
+                                    <button type="submit" class="btn-remove" onclick="return confirm('Are you sure you want to delete this booking?')">
+                                        🗑️ Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-bookings">
+                    <p class="fade-in-delay">📋 No current bookings scheduled.</p>
+                    <p class="fade-in-delay">Book a tee time below to get started!</p>
+                </div>
+            {% endif %}
+        </section>
+
         <section class="booking-section card fade-in-delay">
             <h2>Book a Tee Time</h2>
             <form method="post" action="/booking" class="form">
